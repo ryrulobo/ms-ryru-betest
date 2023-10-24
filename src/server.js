@@ -3,6 +3,8 @@ const cors = require("cors");
 
 const { connectDb } = require("./config/mongoConfig");
 const Logging = require("./lib/logging");
+const router = require("./routes");
+const errorHandler = require("./middlewares/errorHandler");
 
 const app = express();
 const port = process.env.SERVER_PORT || 5555;
@@ -38,6 +40,8 @@ const StartServer = () => {
       credentials: true,
     })
   );
+  app.use(router);
+  app.use(errorHandler);
   app.listen(port, () => {
     Logging.info(`🚀 Server is running on port ${port}`);
   });
