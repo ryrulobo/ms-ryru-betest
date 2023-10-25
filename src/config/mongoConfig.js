@@ -1,10 +1,5 @@
-const dotenv = require("dotenv");
-const path = require("path");
 const mongoose = require("mongoose");
 const Logging = require("../lib/logging");
-
-const envPath = path.resolve(__dirname, "../../.env");
-dotenv.config({ path: envPath });
 
 const {
   MONGO_DB_USERNAME,

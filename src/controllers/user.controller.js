@@ -3,6 +3,8 @@ const User = require("../models/user.model");
 const { generateAccountNumber } = require("../helpers/helpers");
 const { hashPassword, comparePassword } = require("../helpers/bcrypt.js");
 const { createToken } = require("../helpers/jwt");
+const redisClient = require("../config/redisConfig");
+const { REDIS_CACHE_KEY } = process.env;
 
 class UserController {
   static async createUser(req, res, next) {
@@ -23,6 +25,9 @@ class UserController {
 
       const user = new User(userData);
       const savedUser = await user.save();
+
+      // clear cached users data
+      await redisClient.del(REDIS_CACHE_KEY);
 
       res.status(201).json({
         code: 201,
@@ -66,7 +71,15 @@ class UserController {
 
   static async findAllUser(req, res, next) {
     try {
-      const users = await User.find({}, "-password");
+      let users = await redisClient.get(REDIS_CACHE_KEY);
+
+      if (!users) {
+        users = await User.find({}, "-password");
+        redisClient.set(REDIS_CACHE_KEY, JSON.stringify(users));
+      } else {
+        users = JSON.parse(users);
+      }
+
       res.status(200).json({
         code: 200,
         message: {
@@ -147,6 +160,9 @@ class UserController {
       req.headers = {};
       req.user = {};
 
+      // clear cached users data
+      await redisClient.del(REDIS_CACHE_KEY);
+
       res.status(200).json({
         code: 200,
         message: `user successfully updated`,
@@ -168,6 +184,9 @@ class UserController {
       // user will need to relog using other account/register new account
       req.headers = {};
       req.user = {};
+
+      // Clear cached users data
+      await redisClient.del(REDIS_CACHE_KEY);
 
       res.status(200).json({
         code: 200,
