@@ -26,9 +26,42 @@ const errorHandler = (err, req, res, next) => {
       statusCode = 400;
       message = "password is required";
       break;
+    case "empty_account_number":
+      statusCode = 400;
+      message = "accountNumber is required";
+      break;
     case "duplicate_username":
       statusCode = 400;
       message = "username already exists";
+      break;
+    case "empty_request_body":
+      statusCode = 400;
+      message = "invalid input";
+      break;
+    case "CastError":
+      statusCode = 400;
+      message = "invalid id, please check your input";
+      break;
+    case "invalid_credential":
+      statusCode = 401;
+      message = "invalid username/password";
+      break;
+    case "TokenExpiredError":
+      statusCode = 401;
+      message = "token expired";
+      break;
+    case "JsonWebTokenError":
+    case "unauthorized":
+      statusCode = 403;
+      message = "unauthorized activity";
+      break;
+    case "forbidden":
+      statusCode = 403;
+      message = "forbidden activity";
+      break;
+    case "user_not_found":
+      statusCode = 404;
+      message = "user not found";
       break;
   }
 

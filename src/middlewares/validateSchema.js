@@ -53,6 +53,27 @@ const schemas = {
             "Password must contain at least one uppercase letter, one lowercase letter, and one number",
         }),
     }),
+    login: Joi.object({
+      userName: Joi.string().required().min(6).max(20).messages({
+        "string.empty": "Username should not be empty",
+        "string.required": "Username should not be empty",
+        "string.min": "Username must be at least 6 characters",
+        "string.max": "Username must be less or equal to {#limit} characters",
+      }),
+      password: Joi.string()
+        .required()
+        .min(6)
+        .max(20)
+        .pattern(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/)
+        .messages({
+          "string.empty": "Password should not be empty",
+          "string.required": "Password should not be empty",
+          "string.min": "Password must be at least 6 characters",
+          "string.max": "Password must be less or equal to {#limit} characters",
+          "string.pattern.base":
+            "Password must contain at least one uppercase letter, one lowercase letter, and one number",
+        }),
+    }),
   },
 };
 
